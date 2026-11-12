@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "Golden Light",
+  "short_name": "Golden Light",
+  "description": "Connect, share stories, photos and videos on Golden Light.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#171717",
+  "theme_color": "#b8860b",
+  "icons": [
+    {"src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable"}
+  ]
+}

@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#b8860b">
+<meta name="description" content="Golden Light — connect, share stories, photos and videos.">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-512.png">
+<title>Golden Light</title>
+<style>
+:root{--gold:#c49a36;--gold2:#e4c36d;--ink:#171717;--muted:#777;--paper:#f3f3f1;--line:#ece9e1}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,Helvetica,sans-serif;background:var(--paper);color:#242424;padding-bottom:78px}
+button,input,textarea{font:inherit}button{cursor:pointer}
+header{height:62px;background:#fff;position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;padding:0 15px;box-shadow:0 2px 12px #0000000d}
+.logo{font-size:22px;font-weight:800;color:var(--gold);letter-spacing:-.5px}
+.head-actions{display:flex;gap:9px}.round{width:39px;height:39px;border:0;border-radius:50%;background:#f5f1e7;font-size:18px;color:#5b481d}
+.page{max-width:680px;margin:auto}.hidden{display:none!important}
+.search{margin:12px;background:#fff;border-radius:24px;padding:12px 15px;color:#888;border:1px solid var(--line)}
+.section-title{font-weight:750;font-size:17px;margin:17px 14px 10px}
+.online-area,.white-panel{background:#fff;margin-bottom:11px;padding:13px 0}
+.online-list,.stories{display:flex;gap:13px;overflow-x:auto;padding:4px 14px 10px;scrollbar-width:none}.online-list::-webkit-scrollbar,.stories::-webkit-scrollbar{display:none}
+.person{min-width:62px;text-align:center;font-size:11px;color:#555}.avatar-wrap{position:relative;width:57px;margin:0 auto 6px}
+.avatar{width:57px;height:57px;border-radius:50%;object-fit:cover;border:2px solid var(--gold2)}
+.online-dot{position:absolute;right:0;bottom:2px;width:13px;height:13px;border-radius:50%;background:#25b65b;border:2px solid white}
+.stories{padding-bottom:13px}.story{width:104px;min-width:104px;height:158px;border-radius:13px;overflow:hidden;position:relative;background:#333;color:#fff}
+.story img,.story video{width:100%;height:100%;object-fit:cover}.story:after{content:"";position:absolute;inset:45% 0 0;background:linear-gradient(transparent,#000a);pointer-events:none}
+.story-name{position:absolute;z-index:2;bottom:9px;left:8px;font-size:12px;font-weight:bold;color:#fff}
+.add-story{background:#fff7e5;color:#9b751d;display:flex;align-items:center;justify-content:center;flex-direction:column;font-weight:bold;font-size:12px;border:1px dashed #d7b65e}
+.add-story span{font-size:37px}
+.composer,.post,.panel-card{background:#fff;margin:12px;border-radius:15px;box-shadow:0 2px 12px #00000008;overflow:hidden}
+.composer{padding:14px}.composer-top{display:flex;gap:10px;align-items:center}.small-avatar{width:43px;height:43px;border-radius:50%;object-fit:cover}
+.composer input{min-width:0;flex:1;border:0;background:#f3f2ef;padding:13px;border-radius:24px}
+.composer-actions{display:flex;justify-content:space-around;border-top:1px solid var(--line);margin-top:13px;padding-top:12px;gap:5px}
+.composer-actions button,.post-actions button{border:0;background:none;color:#555;font-size:13px;padding:5px}
+.gold-btn{background:var(--gold);color:white;border:0;padding:12px 18px;border-radius:25px;font-weight:bold}
+.post-head{padding:13px;display:flex;align-items:center;gap:10px}.post-head img{width:43px;height:43px;border-radius:50%;object-fit:cover}
+.post-user{font-weight:bold;font-size:14px}.post-time{font-size:11px;color:#999;margin-top:4px}
+.post-text{padding:0 14px 13px;font-size:14px;line-height:1.55;white-space:pre-wrap}
+.post-media{display:block;width:100%;max-height:520px;object-fit:contain;background:#111}
+.post-count{padding:9px 14px;color:#888;font-size:12px;border-bottom:1px solid #f1f1f1}
+.post-actions{display:flex;justify-content:space-around;padding:10px 4px}
+.post-actions button.liked{color:#d33;font-weight:bold}
+.comment-area{padding:0 13px 13px}.comment-area input{width:100%;padding:11px;border:1px solid #eee;border-radius:20px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;height:68px;background:#fff;display:flex;justify-content:space-around;align-items:center;z-index:30;box-shadow:0 -2px 15px #00000012}
+.bottom-nav button{border:0;background:none;color:#777;font-size:10px;display:flex;flex-direction:column;gap:4px;align-items:center;min-width:52px}
+.bottom-nav button span{font-size:21px}.bottom-nav button.active{color:var(--gold);font-weight:bold}
+.panel{padding:14px 0}.panel h2{color:#a77c1d;margin:12px 14px 16px}.panel-card{padding:16px}
+.field{width:100%;padding:12px;margin:7px 0;border:1px solid #ddd;border-radius:9px;background:#fff}
+.chat-row{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid #eee}.chat-row img{width:46px;height:46px;border-radius:50%;object-fit:cover}
+.muted{font-size:12px;color:#999;margin-top:5px}.profile-pic{width:100px;height:100px;border-radius:50%;object-fit:cover;border:4px solid var(--gold2)}
+.profile-cover{height:120px;background:linear-gradient(120deg,#171717,#80601d,#e1c16b);border-radius:12px;margin-bottom:-48px}
+.profile-top{text-align:center;padding-top:0}.profile-top .profile-pic{position:relative}
+.pill{display:inline-block;padding:7px 11px;background:#f8f1df;color:#8b681d;border-radius:20px;font-size:12px;margin:3px}
+.media-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.media-grid img,.media-grid video{width:100%;height:150px;object-fit:cover;border-radius:9px;background:#111}
+.empty{padding:22px;text-align:center;color:#888;font-size:13px}
+.live-card{background:#181818;color:white;border-radius:14px;padding:18px;margin:12px}.live-dot{color:#ff4545;font-weight:bold}
+.modal{position:fixed;inset:0;background:#000b;z-index:50;display:flex;align-items:center;justify-content:center;padding:14px}.modal-box{background:white;width:100%;max-width:460px;border-radius:16px;padding:18px;max-height:85vh;overflow:auto}.modal-box h3{margin-bottom:12px}.modal-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:12px}.story-viewer{background:#111;color:white;width:100%;max-width:430px;height:min(82vh,720px);border-radius:16px;overflow:hidden;position:relative;display:flex;flex-direction:column}.story-viewer-media{width:100%;height:100%;min-height:0;object-fit:contain;background:#080808}.story-viewer-top{position:absolute;top:0;left:0;right:0;padding:14px;background:linear-gradient(#0009,transparent);display:flex;justify-content:space-between;align-items:center;z-index:2}.story-viewer-bottom{background:#171717;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:8px}.story-viewer button{border:0;border-radius:20px;padding:9px 12px;background:#c49a36;color:white}.archive-item{display:flex;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid #eee}.archive-item img,.archive-item video{width:65px;height:65px;object-fit:cover;border-radius:8px;background:#111}
+small.note{display:block;color:#888;line-height:1.45;margin-top:10px}
+@media(min-width:700px){body{padding-bottom:85px}.bottom-nav{left:50%;right:auto;transform:translateX(-50%);width:680px;border-radius:15px 15px 0 0}}
+
+/* Golden Light: rich, shiny gold theme */
+:root{--gold:#b8860b;--gold2:#f7d978;--ink:#3b2900;--muted:#6e5315;--paper:#d9ad35;--line:#c99a24}
+body{background:linear-gradient(135deg,#f8e7a0 0%,#d6a52b 24%,#f5d66e 45%,#bd8918 68%,#f2d477 86%,#c18b16 100%);background-attachment:fixed;color:#3b2900}
+header,.bottom-nav{background:linear-gradient(110deg,#9d6d08 0%,#f8df83 18%,#c28d16 38%,#ffe89a 58%,#b47c0b 78%,#f2d477 100%);box-shadow:0 3px 16px #6b480855}
+.logo{color:#5b3b00;text-shadow:0 1px 0 #fff2b5,0 2px 5px #6f4b0a66}
+.round,.add-story,.pill{background:linear-gradient(145deg,#fff0ad,#d9aa35 55%,#f9e28b);color:#573900;border:1px solid #b8860b}
+.online-area,.white-panel,.composer,.post,.panel-card,.modal-box{background:linear-gradient(145deg,#fff0b3 0%,#e7bf52 32%,#f8df8a 58%,#d6a52c 100%);border:1px solid #c49320;box-shadow:0 4px 16px #70490030}
+.search,.composer input,.field,.comment-area input{background:linear-gradient(135deg,#fff4c8,#f0d47e);color:#493100;border:1px solid #c99a24}
+.section-title,.panel h2{color:#563900;text-shadow:0 1px 0 #fff0b0}
+.gold-btn,.story-viewer button{background:linear-gradient(115deg,#9b6800 0%,#f9df7c 22%,#c18a0c 45%,#ffe99b 65%,#a66f05 100%);color:#3d2800;border:1px solid #9e700e;box-shadow:inset 0 1px 2px #fff8c9,0 3px 8px #71480055;text-shadow:0 1px 0 #fff0b0}
+.composer-actions button,.post-actions button,.bottom-nav button{color:#553900}
+.bottom-nav button.active{color:#2d1c00;text-shadow:0 1px 0 #fff0a8}
+.post-count,.post-time,.muted,.empty{color:#72571b}
+.profile-cover{background:linear-gradient(115deg,#9b6b08,#f7df82,#bd8916,#ffeb9e,#9b6b08)}
+.avatar,.profile-pic{border-color:#f8dc77;box-shadow:0 0 0 2px #9e700e,0 0 12px #f7d978}
+.live-card{background:linear-gradient(120deg,#4a3205,#9c6c0b,#e4bd4d);color:#fff5d1}
+
+
+/* Golden Light: rotating decorative wallpapers, changing every 3 seconds */
+body{background:#17202b;color:#242424;background-attachment:fixed}
+body:before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(#10090033,#10090033),var(--gl-wallpaper,linear-gradient(135deg,#173b58,#56a6b8,#d4e7e8));
+  background-size:cover;background-position:center;background-attachment:fixed;
+  transition:background-image .8s ease,filter .8s ease;filter:saturate(1.18) contrast(1.04);
+}
+body>*{position:relative;z-index:1}
+
+
+/* Luxury antique gold finish inspired by the supplied Golden Light emblem */
+.online-area,.white-panel,.composer,.post,.panel-card,.modal-box{
+  position:relative; overflow:hidden;
+  background:linear-gradient(132deg,#2b1700 0%,#8a5600 9%,#f7d45b 17%,#a96c08 25%,#ffe99a 34%,#754400 45%,#d99d19 57%,#fff0a6 66%,#98600a 78%,#3b2100 100%);
+  background-size:220% 220%; animation:glAntiqueShine 7s ease-in-out infinite;
+  border:2px solid #f4d36a;
+  box-shadow:inset 0 2px 4px #fff8c7,inset 0 -5px 12px #32190099,0 5px 18px #160d00a8,0 0 13px #f5c84c88;
+}
+.online-area::after,.white-panel::after,.composer::after,.post::after,.panel-card::after,.modal-box::after{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:
+    radial-gradient(circle at 12% 24%,#fffbdc 0 1.5px,transparent 3px),
+    radial-gradient(circle at 29% 72%,#fff4b0 0 1px,transparent 3px),
+    radial-gradient(circle at 51% 18%,#ffffff 0 1.7px,transparent 3.5px),
+    radial-gradient(circle at 73% 62%,#fff4b0 0 1.3px,transparent 3px),
+    radial-gradient(circle at 88% 32%,#ffffff 0 1.6px,transparent 3.5px),
+    linear-gradient(112deg,transparent 0%,#fff8c866 18%,transparent 31%,#fff1a522 49%,transparent 63%,#fff8c855 78%,transparent 88%);
+  background-size:100% 100%,100% 100%,100% 100%,100% 100%,100% 100%,230% 100%;
+  animation:glSparkle 2.2s ease-in-out infinite alternate,glSweep 4s linear infinite;opacity:.95;
+}
+.online-area>* ,.white-panel>* ,.composer>* ,.post>* ,.panel-card>* ,.modal-box>*{position:relative;z-index:1}
+@keyframes glAntiqueShine{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes glSweep{0%{background-position:130% 0}100%{background-position:-130% 0}}
+@keyframes glSparkle{0%{opacity:.35;filter:brightness(1)}45%{opacity:1;filter:brightness(1.7)}100%{opacity:.65;filter:brightness(1.2)}}
+.search,.composer input,.field,.comment-area input{background:linear-gradient(135deg,#241500,#b77a0b 28%,#ffe9a0 48%,#9a6108 70%,#281600);color:#fff4c9;border:1px solid #f5d36b;box-shadow:inset 0 2px 5px #160b00aa,0 0 8px #e9b83e77}
+.section-title,.panel h2{color:#ffe69a;text-shadow:0 2px 3px #1b0e00,0 0 9px #f7d35f}
+header,.bottom-nav{background:linear-gradient(115deg,#251400,#9a6208 18%,#ffe99a 32%,#b87908 48%,#fff0b0 62%,#754400 82%,#1d1000);border-color:#f6d56b;box-shadow:0 3px 20px #160b00aa}
+.logo{color:#ffe79a;text-shadow:0 1px 2px #2a1600,0 0 10px #ffd54d}
+.round,.add-story,.pill,.gold-btn,.story-viewer button{background:linear-gradient(120deg,#291700,#a96b08 18%,#ffe99a 34%,#bd810d 50%,#fff0b0 66%,#754500 85%,#241400);color:#fff0b3;border:1px solid #f7d66f;box-shadow:inset 0 2px 4px #fff8c8,0 3px 12px #190d00aa,0 0 10px #f5c84c77;text-shadow:0 1px 2px #281500}
+.composer-actions button,.post-actions button,.bottom-nav button{color:#3b2300;text-shadow:0 1px 0 #fff0a0}
+.bottom-nav button.active{color:#fff0a5;text-shadow:0 0 8px #fff0a0}
+.post-count,.post-time,.muted,.empty{color:#3d2700}
+.avatar,.profile-pic{border-color:#ffe58a;box-shadow:0 0 0 2px #684000,0 0 14px #ffdf62}
+@media(prefers-reduced-motion:reduce){.online-area,.white-panel,.composer,.post,.panel-card,.modal-box{animation:none}.online-area::after,.white-panel::after,.composer::after,.post::after,.panel-card::after,.modal-box::after{animation:none}}
+
+
+/* Smooth, natural scrolling on phones without snapping or blocking touch */
+html{
+  scroll-behavior:smooth;
+  -webkit-text-size-adjust:100%;
+  overscroll-behavior-y:auto;
+}
+body{
+  min-height:100vh;
+  overflow-x:hidden;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-y:contain;
+  touch-action:pan-y;
+}
+.page{
+  overflow:visible;
+  scroll-behavior:smooth;
+}
+.online-list,.stories{
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  touch-action:pan-x pan-y;
+  scroll-behavior:smooth;
+}
+.modal-box,.story-viewer{
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior:contain;
+}
+@media(prefers-reduced-motion:reduce){
+  html,.page,.online-list,.stories{scroll-behavior:auto}
+}
+
+
+
+/* Return Golden Light to a clean white theme and keep touch scrolling smooth */
+html{scroll-behavior:smooth;-webkit-overflow-scrolling:touch}
+body{background:#17202b!important;background-image:none!important;background-attachment:fixed!important;animation:none!important;color:#242424;overscroll-behavior-y:auto;touch-action:pan-y pan-x;position:relative}
+body:before,body:after{display:block!important;content:""!important;position:fixed!important;inset:0!important;pointer-events:none!important;z-index:0!important;background-size:cover!important;background-position:center!important;background-repeat:no-repeat!important;filter:saturate(1.15) contrast(1.03)!important;transition:opacity 1.35s ease-in-out!important}
+body:before{background-image:linear-gradient(#00000022,#00000022),var(--gl-wallpaper,linear-gradient(135deg,#173b58,#56a6b8,#d4e7e8))!important;opacity:1!important}
+body:after{background-image:linear-gradient(#00000022,#00000022),var(--gl-next-wallpaper,none)!important;opacity:0!important}
+body.gl-wallpaper-fade:before{opacity:0!important}
+body.gl-wallpaper-fade:after{opacity:1!important}
+body>*{position:relative;z-index:1}
+header,.bottom-nav{background:#fff!important;box-shadow:0 2px 12px #00000012!important}
+.online-area,.white-panel,.composer,.post,.panel-card,.modal-box{background:#fff!important;background-image:none!important;animation:none!important;border:1px solid #eee!important;box-shadow:0 2px 12px #0000000d!important}
+.online-area:after,.white-panel:after,.composer:after,.post:after,.panel-card:after,.modal-box:after{display:none!important;content:none!important}
+.search,.composer input,.field,.comment-area input{background:#f7f7f7!important;color:#333!important;border:1px solid #e6e6e6!important;box-shadow:none!important}
+.section-title,.panel h2{color:#333!important;text-shadow:none!important}
+.composer-actions button,.post-actions button,.bottom-nav button{color:#555!important;text-shadow:none!important}
+.post-count,.post-time,.muted,.empty{color:#777!important}
+/* Native-feeling vertical page scroll and smooth horizontal story strips */
+body,.page,main{overflow-y:visible;-webkit-overflow-scrolling:touch}
+.online-list,.stories{overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;scroll-behavior:smooth;touch-action:pan-x}
+.modal-box,.story-viewer{overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+
+</style>
+</head>
+<body>
+<header><div class="logo">✦ Golden Light</div><div class="head-actions"><button class="round" onclick="showPage('messages')">✉</button><button class="round" onclick="showPage('notifications')">♧</button></div></header>
+<main class="page" id="home">
+  <div class="search" onclick="openSearch()">⌕ Search people and posts on Golden Light</div>
+  <section class="online-area"><div class="section-title">People Online <span style="color:#27a653;font-size:12px">● Online</span></div><div class="online-list" id="onlineList"></div></section>
+  <div class="section-title">Stories</div>
+  <div class="stories" id="stories">
+    <button class="story add-story" onclick="document.getElementById('storyFile').click()"><span>+</span>Add Story</button>
+    <div class="story"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300"><div class="story-name">Sophia</div></div>
+    <div class="story"><img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300"><div class="story-name">Daniel</div></div>
+    <div class="story"><img src="https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=300"><div class="story-name">Grace</div></div>
+    <div class="story"><img src="https://images.unsplash.com/photo-1517841905240-472988babdf9?w=300"><div class="story-name">Emma</div></div>
+    <div class="story"><img src="https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=300"><div class="story-name">Morning Light</div></div>
+    <div class="story"><img src="https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=300"><div class="story-name">Adventure</div></div>
+    <div class="story"><img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=300"><div class="story-name">Flowers</div></div>
+    <div class="story"><img src="https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=300"><div class="story-name">Travel</div></div>
+    <div class="story"><img src="https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=300"><div class="story-name">Ocean</div></div>
+  </div>
+  <input type="file" id="storyFile" accept="image/*,video/*" hidden onchange="addStory(this)">
+  <section class="composer">
+    <div class="composer-top"><img id="myAvatar" class="small-avatar" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100"><input id="postText" placeholder="What's happening in your world?"></div>
+    <div class="composer-actions">
+      <button onclick="pick('photoFile')">📷 Photo</button><button onclick="pick('videoFile')">🎬 Video</button><button onclick="pick('musicFile')">🎵 Music</button><button onclick="publish()">✦ Post</button>
+    </div>
+    <input type="file" id="photoFile" accept="image/*" hidden onchange="selectedFile('photoFile','Photo selected')">
+    <input type="file" id="videoFile" accept="video/*" hidden onchange="selectedFile('videoFile','Video selected')">
+    <input type="file" id="musicFile" accept="audio/*" hidden onchange="selectedFile('musicFile','Music selected')">
+    <div id="selectionNote" class="muted"></div>
+    <button class="gold-btn" style="width:100%;margin-top:12px" onclick="publish()">Share with everyone</button>
+  </section>
+  <div class="section-title">Your News Feed</div><div id="feed"></div>
+</main>
+
+<section class="page panel hidden" id="media"><h2>Golden Light Media</h2>
+  <div class="panel-card"><p>Explore a larger sample collection of photos, videos, reels and music. Scroll the Home feed to see more.</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:12px 0"><button class="gold-btn" onclick="pick('mediaFile')">＋ Add Media</button><button class="gold-btn" onclick="showPage('home')">Create Post</button></div><input id="mediaFile" type="file" accept="image/*,video/*,audio/*" hidden onchange="addToMedia(this)"><div id="mediaDisplay" class="media-grid"></div><small class="note">Media selected on this device is previewed here. Online sharing and permanent cloud storage require a connected backend.</small></div>
+</section>
+<section class="page panel hidden" id="friends"><h2>Friends</h2><div class="panel-card"><p>Discover people and connect with your community.</p><div id="friendList"></div></div></section>
+<section class="page panel hidden" id="messages"><h2>Messages</h2><div class="panel-card" id="chatList"></div></section>
+<section class="page panel hidden" id="chat"><h2 id="chatTitle">Conversation</h2><div class="panel-card"><div id="chatMessages"></div><div style="display:flex;gap:7px"><input id="chatInput" class="field" placeholder="Write a message"><button class="gold-btn" onclick="sendMessage()">Send</button></div><small class="note">Demo messages are saved only in this browser on this device.</small></div></section>
+<section class="page panel hidden" id="notifications"><h2>Notifications</h2><div class="panel-card" id="notificationList">✦ Welcome to Golden Light! Your social journey begins here.</div></section>
+<section class="page panel hidden" id="profile"><h2>My Profile</h2><div class="panel-card profile-top"><div class="profile-cover"></div><img id="profilePic" class="profile-pic" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200"><h2 id="profileName">Golden Light Member</h2><p id="profileUsername">@member</p><p class="muted">Welcome to your personal space.</p><div style="margin:12px"><span class="pill">Posts <b id="postTotal">0</b></span><span class="pill">Friends 5</span><span class="pill">Followers 0</span></div><button class="gold-btn" onclick="showPage('settings')">Edit Profile</button></div><div class="panel-card"><h3>My Posts</h3><div id="myPosts" class="empty">Your posts will appear here.</div><button class="gold-btn" style="margin-top:14px" onclick="showStoryArchive()">My Story Archive</button></div></section>
+<section class="page panel hidden" id="settings"><h2>Settings</h2><div class="panel-card"><label>Display name</label><input id="nameEdit" class="field" placeholder="Your name"><label>Username</label><input id="userEdit" class="field" placeholder="username"><label>Profile photo</label><input id="avatarEdit" class="field" type="file" accept="image/*"><button class="gold-btn" onclick="saveProfile()">Save Profile</button><hr style="margin:18px 0;border:0;border-top:1px solid #eee"><p><b>On-device media storage</b></p><p class="muted">Uploaded posts and stories are saved in this browser on this phone. Do not clear site data or uninstall/clear the browser if you need to preserve them. Download important stories to your phone as an extra copy.</p><br><p><b>Privacy and security</b></p><p class="muted">Account security and private settings will be connected when online accounts are added.</p><button class="gold-btn" style="margin-top:15px" onclick="logout()">Reset local demo</button></div></section>
+<section class="page panel hidden" id="live"><h2>Golden Light LIVE</h2><div class="live-card"><div class="live-dot">● LIVE</div><h3 style="margin:12px 0">Connect with your community</h3><p style="color:#ddd;font-size:13px;line-height:1.5">The LIVE screen is prepared as a preview. Real public broadcasting and watching other users live requires a streaming service and server connection.</p><button class="gold-btn" style="margin-top:15px" onclick="alert('LIVE streaming will be enabled after the streaming service is connected.')">Start LIVE (Preview)</button></div></section>
+
+<nav class="bottom-nav">
+ <button class="active" onclick="showPage('home',this)"><span>⌂</span>Home</button>
+ <button onclick="showPage('media',this)"><span>▶</span>Media</button>
+ <button onclick="showPage('friends',this)"><span>♧</span>Friends</button>
+ <button onclick="showPage('live',this)"><span>🔴</span>LIVE</button>
+ <button onclick="showPage('messages',this)"><span>✉</span>Chats</button>
+ <button onclick="showPage('profile',this)"><span>●</span>Profile</button>
+</nav>
+<div id="modalRoot"></div>
+<script>
+const people=[
+{name:'Sophia Williams',photo:'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100'},
+{name:'Daniel James',photo:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=100'},
+{name:'Grace Adams',photo:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?w=100'},
+{name:'Michael Brown',photo:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100'},
+{name:'Emma Rose',photo:'https://images.unsplash.com/photo-1517841905240-472988babdf9?w=100'}];
+let posts=JSON.parse(localStorage.getItem('glPosts')||'[]'), stories=JSON.parse(localStorage.getItem('glStories')||'[]'), messages=JSON.parse(localStorage.getItem('glMessages')||'{}'), activeChat='';
+let profile=JSON.parse(localStorage.getItem('glProfile')||'{"name":"Golden Light Member","user":"member","photo":"https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200"}');
+const DEFAULT_PROFILE_PHOTO='https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200';
+if(!profile.photo||profile.photo.startsWith('blob:')){profile.photo=DEFAULT_PROFILE_PHOTO;localStorage.setItem('glProfile',JSON.stringify(profile));}
+function avatarFallback(name='Golden Light'){let initials=String(name).trim().split(/\s+/).slice(0,2).map(x=>x[0]||'G').join('').toUpperCase();let svg=`<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160"><rect width="160" height="160" rx="80" fill="#c49a36"/><text x="50%" y="54%" dominant-baseline="middle" text-anchor="middle" font-family="Arial" font-size="58" font-weight="bold" fill="white">${initials}</text></svg>`;return 'data:image/svg+xml;charset=UTF-8,'+encodeURIComponent(svg);}
+function setAvatarImage(img,src,name){img.alt=name||'Profile picture';img.onerror=()=>{img.onerror=null;img.src=avatarFallback(name);};img.src=(src&&!src.startsWith('blob:'))?src:avatarFallback(name);}
+function imageToSmallDataURL(file){return new Promise((resolve,reject)=>{const reader=new FileReader();reader.onerror=()=>reject(reader.error);reader.onload=()=>{const image=new Image();image.onerror=()=>reject(new Error('Image could not be opened'));image.onload=()=>{const max=512,scale=Math.min(1,max/Math.max(image.width,image.height));const canvas=document.createElement('canvas');canvas.width=Math.round(image.width*scale);canvas.height=Math.round(image.height*scale);canvas.getContext('2d').drawImage(image,0,0,canvas.width,canvas.height);resolve(canvas.toDataURL('image/jpeg',0.82));};image.src=reader.result;};reader.readAsDataURL(file);});}
+let mediaDB=null, storyObjectUrls={};
+const DB_NAME='GoldenLightMediaVault', DB_VERSION=1, STORE='media';
+function openMediaDB(){return new Promise((resolve,reject)=>{if(!('indexedDB' in window)){reject(new Error('This browser does not support local media storage.'));return;}let req=indexedDB.open(DB_NAME,DB_VERSION);req.onupgradeneeded=()=>{let db=req.result;if(!db.objectStoreNames.contains(STORE))db.createObjectStore(STORE,{keyPath:'id'});};req.onsuccess=()=>{mediaDB=req.result;resolve(mediaDB)};req.onerror=()=>reject(req.error);});}
+function saveBlob(id,blob,kind,metadata){return new Promise((resolve,reject)=>{let tx=mediaDB.transaction(STORE,'readwrite');tx.objectStore(STORE).put({id,blob,kind,metadata,storedAt:Date.now()});tx.oncomplete=()=>resolve();tx.onerror=()=>reject(tx.error);});}
+function getBlob(id){return new Promise((resolve,reject)=>{let tx=mediaDB.transaction(STORE,'readonly'),req=tx.objectStore(STORE).get(id);req.onsuccess=()=>resolve(req.result||null);req.onerror=()=>reject(req.error);});}
+function getAllBlobs(){return new Promise((resolve,reject)=>{let tx=mediaDB.transaction(STORE,'readonly'),req=tx.objectStore(STORE).getAll();req.onsuccess=()=>resolve(req.result||[]);req.onerror=()=>reject(req.error);});}
+function persist(){localStorage.setItem('glPosts',JSON.stringify(posts));localStorage.setItem('glStories',JSON.stringify(stories));localStorage.setItem('glMessages',JSON.stringify(messages));}
+function newId(){return 'gl_'+Date.now()+'_'+Math.random().toString(36).slice(2,9);}
+const $=id=>document.getElementById(id);
+function persist(){localStorage.setItem('glPosts',JSON.stringify(posts));localStorage.setItem('glStories',JSON.stringify(stories));localStorage.setItem('glMessages',JSON.stringify(messages));}
+function showPage(id,btn){document.querySelectorAll('main.page,section.page').forEach(p=>p.classList.add('hidden'));$(id).classList.remove('hidden');document.querySelectorAll('.bottom-nav button').forEach(b=>b.classList.remove('active'));if(btn)btn.classList.add('active');else{let map={home:0,media:1,friends:2,live:3,messages:4,profile:5};document.querySelectorAll('.bottom-nav button')[map[id]??0].classList.add('active')}window.scrollTo(0,0);if(id==='profile')renderMyPosts();if(id==='messages')renderChats();}
+function pick(id){$(id).click()}
+function selectedFile(id,label){$('selectionNote').textContent=label+': '+($(id).files[0]?.name||'');}
+function renderPeople(){people.forEach(p=>{let d=document.createElement('div');d.className='person';d.innerHTML='<div class="avatar-wrap"><img class="avatar"><span class="online-dot"></span></div>'+p.name.split(' ')[0];setAvatarImage(d.querySelector('img'),p.photo,p.name);$('onlineList').append(d);let f=document.createElement('div');f.className='chat-row';let pic=document.createElement('img');setAvatarImage(pic,p.photo,p.name);f.append(pic);let info=document.createElement('div');info.style.flex='1';info.innerHTML='<b>'+escapeHTML(p.name)+'</b><p class="muted">Suggested friend</p>';f.append(info);let add=document.createElement('button');add.className='gold-btn';add.textContent='Add';add.onclick=()=>alert('Friend request preview. Online friend requests need an account server.');f.append(add);$('friendList').append(f);});}
+function escapeHTML(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function mediaElement(url,type){let el=document.createElement(type.startsWith('video/')?'video':type.startsWith('audio/')?'audio':'img');el.src=url;el.className='post-media';if(el.tagName==='VIDEO'||el.tagName==='AUDIO'){el.controls=true;if(el.tagName==='VIDEO')el.playsInline=true;}return el;}
+function makePost(p,prepend=false){let article=document.createElement('article');article.className='post';let head=document.createElement('div');head.className='post-head';let avatar=document.createElement('img');setAvatarImage(avatar,p.photo||profile.photo,p.name);let info=document.createElement('div');info.innerHTML='<div class="post-user">'+escapeHTML(p.name)+'</div><div class="post-time">'+escapeHTML(p.time||'Just now')+'</div>';head.append(avatar,info);article.append(head);if(p.text){let t=document.createElement('div');t.className='post-text';t.textContent=p.text;article.append(t);}if(p.url){article.append(mediaElement(p.url,p.type||'image/jpeg'));}let count=document.createElement('div');count.className='post-count';count.textContent='♡ '+(p.likes||0)+' likes · '+(p.comments?.length||0)+' comments';article.append(count);let actions=document.createElement('div');actions.className='post-actions';let like=document.createElement('button');like.textContent=p.liked?'♥ Liked':'♡ Like';if(p.liked)like.className='liked';like.onclick=()=>{p.liked=!p.liked;p.likes=Math.max(0,(p.likes||0)+(p.liked?1:-1));persist();renderFeed()};let comment=document.createElement('button');comment.textContent='▢ Comment';comment.onclick=()=>{let v=prompt('Write your comment:');if(v?.trim()){p.comments=p.comments||[];p.comments.push(v.trim());persist();renderFeed()}};let share=document.createElement('button');share.textContent='↗ Share';share.onclick=()=>{if(navigator.share)navigator.share({title:'Golden Light',text:p.text||'See this post on Golden Light'}).catch(()=>{});else alert('Sharing is not supported in this browser.')};actions.append(like,comment,share);article.append(actions);if(p.comments?.length){let c=document.createElement('div');c.className='comment-area';p.comments.forEach(x=>{let q=document.createElement('p');q.style.cssText='font-size:12px;margin:5px 0';q.textContent=x;c.append(q)});article.append(c)}if(prepend)$('feed').prepend(article);else $('feed').append(article);}
+function renderFeed(){$('feed').replaceChildren();let samples=[
+{name:'Sophia Williams',photo:people[0].photo,time:'Online · 10 minutes ago',text:'Life becomes beautiful when you learn to appreciate every little blessing. Keep shining! ✨',url:'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900',type:'image/jpeg',likes:248,comments:['Beautiful reminder!','Keep shining ✨']},
+{name:'Daniel James',photo:people[1].photo,time:'Online · 25 minutes ago',text:'Never give up on your dreams. Your time will come. Keep working and believing. 💛',url:'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900',type:'image/jpeg',likes:186,comments:['Thank you for this!']},
+{name:'Grace Adams',photo:people[2].photo,time:'35 minutes ago',text:'A little kindness can brighten somebody’s whole day. Be the reason someone smiles today. 🌸',url:'https://images.unsplash.com/photo-1490750967868-88aa4486c946?w=900',type:'image/jpeg',likes:92,comments:['So true!']},
+{name:'Michael Brown',photo:people[3].photo,time:'1 hour ago',text:'Take a deep breath. You are growing, even on the days when progress feels slow.',url:'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=900',type:'image/jpeg',likes:134,comments:[]},
+{name:'Emma Rose',photo:people[4].photo,time:'1 hour ago',text:'Peace looks good on you. Protect your joy. 💛',url:'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=900',type:'image/jpeg',likes:76,comments:[]},
+{name:'Golden Light Videos',photo:people[0].photo,time:'Featured video',text:'Take a moment to enjoy this sample nature video.',url:'https://www.w3schools.com/html/mov_bbb.mp4',type:'video/mp4',likes:305,comments:['Beautiful video']},
+{name:'Golden Light Music',photo:people[1].photo,time:'Featured music',text:'Listen to this sample instrumental track. Tap play to listen.',url:'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',type:'audio/mpeg',likes:57,comments:[]},
+{name:'Travel Moments',photo:people[2].photo,time:'2 hours ago',text:'Some places remind us how beautiful the world is. 🌍',url:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=900',type:'image/jpeg',likes:411,comments:[]},
+{name:'Daily Inspiration',photo:people[3].photo,time:'3 hours ago',text:'Your story is still being written. Do not give up in the middle of a difficult chapter.',url:'https://images.unsplash.com/photo-1500534623283-312aade485b7?w=900',type:'image/jpeg',likes:228,comments:[]},
+{name:'Food & Lifestyle',photo:people[4].photo,time:'4 hours ago',text:'A fresh start, a grateful heart, and a beautiful day ahead. ☀️',url:'https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=900',type:'image/jpeg',likes:119,comments:[]},
+{name:'Ocean Stories',photo:people[0].photo,time:'5 hours ago',text:'Let the sound of the waves remind you to slow down.',url:'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900',type:'image/jpeg',likes:163,comments:[]},
+{name:'Creative Life',photo:people[1].photo,time:'6 hours ago',text:'Create something today, even if it is something small.',url:'https://images.unsplash.com/photo-1455390582262-044c3557e0b8?w=900',type:'image/jpeg',likes:88,comments:[]},
+{name:'Golden Light Reels',photo:people[2].photo,time:'Featured clip',text:'A short sample clip for the video feed.',url:'https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4',type:'video/mp4',likes:194,comments:[]},
+{name:'Nature Lovers',photo:people[3].photo,time:'Yesterday',text:'Find beauty in the little things around you. 🌿',url:'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=900',type:'image/jpeg',likes:271,comments:[]},
+{name:'Good Morning',photo:people[4].photo,time:'Yesterday',text:'May today bring you fresh hope, strength and new opportunities.',url:'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=900',type:'image/jpeg',likes:352,comments:[]}
+];[...posts].reverse().forEach(p=>makePost(p));samples.forEach(p=>makePost(p));$('postTotal').textContent=posts.length;}
+async function publish(){let text=$('postText').value.trim(),photo=$('photoFile').files[0],video=$('videoFile').files[0],music=$('musicFile').files[0],file=photo||video||music;if(!text&&!file){alert('Write something or choose a photo, video or music file first.');return;}let type=file?.type||'',id=file?newId():null;try{if(file)await saveBlob(id,file,'post',{name:profile.name,createdAt:Date.now()});let post={id:newId(),mediaId:id,name:profile.name,photo:profile.photo,text,type,time:new Date().toLocaleString(),createdAt:Date.now(),likes:0,comments:[]};posts.push(post);if(file)post.url=URL.createObjectURL(file);persist();$('postText').value='';['photoFile','videoFile','musicFile'].forEach(x=>$(x).value='');$('selectionNote').textContent='';renderFeed();alert('Your post is saved in this browser on this device. Your video or music file can be played again after you return.');}catch(e){alert('Could not save this media on this device. Please check browser storage space and try again.');}}
+async function addStory(input){let file=input.files[0];if(!file)return;let id=newId(),createdAt=Date.now();try{await saveBlob(id,file,'story',{owner:profile.name,createdAt});let story={id,mediaId:id,type:file.type,name:profile.name,createdAt,expiresAt:createdAt+24*60*60*1000};stories.push(story);persist();let url=URL.createObjectURL(file);storyObjectUrls[id]=url;renderStories();input.value='';alert('Your story has been saved to your Golden Light Story Archive on this device. It will disappear from active stories after 24 hours.');}catch(e){alert('Story could not be saved. Please check available device storage.');}}
+async function addToMedia(input){let file=input.files[0];if(!file)return;let id=newId();try{await saveBlob(id,file,'media',{owner:profile.name,createdAt:Date.now()});let url=URL.createObjectURL(file),el=mediaElement(url,file.type);el.classList.remove('post-media');$('mediaDisplay').prepend(el);input.value='';}catch(e){alert('Could not save this media on this device.');}}
+function renderStories(){let box=$('stories');box.querySelectorAll('.story:not(.add-story)').forEach(x=>x.remove());let active=stories.filter(s=>s.expiresAt>Date.now()).sort((a,b)=>b.createdAt-a.createdAt);active.forEach(s=>{let tile=document.createElement('button');tile.className='story';tile.style.border='0';let url=storyObjectUrls[s.id];let el=document.createElement((s.type||'').startsWith('video/')?'video':'img');if(url)el.src=url;else el.style.background='#333';if(el.tagName==='VIDEO'){el.muted=true;el.playsInline=true;}let label=document.createElement('div');label.className='story-name';label.textContent=s.name||'Story';tile.append(el,label);tile.onclick=()=>openStory(s.id);box.append(tile);});}
+async function restoreLocalMedia(){try{await openMediaDB();let records=await getAllBlobs(),urls={};records.forEach(r=>{urls[r.id]=URL.createObjectURL(r.blob)});posts.forEach(p=>{if(p.mediaId&&urls[p.mediaId])p.url=urls[p.mediaId];});stories.forEach(s=>{if(s.mediaId&&urls[s.mediaId])storyObjectUrls[s.id]=urls[s.mediaId];});renderFeed();renderStories();}catch(e){console.warn('Local media vault unavailable',e);alert('Your browser could not open local media storage. Do not clear browser data if you need to keep locally saved posts and stories.');}}
+function openStory(id){let s=stories.find(x=>x.id===id);if(!s)return;let url=storyObjectUrls[s.id];if(!url){alert('This story file is not available in this browser storage.');return;}let viewer=document.createElement('div');viewer.className='modal';viewer.id='storyViewer';let card=document.createElement('div');card.className='story-viewer';let top=document.createElement('div');top.className='story-viewer-top';let who=document.createElement('b');who.textContent=s.name||'Golden Light Member';let close=document.createElement('button');close.textContent='✕';close.onclick=()=>viewer.remove();top.append(who,close);let media=mediaElement(url,s.type||'image/jpeg');media.className='story-viewer-media';let bottom=document.createElement('div');bottom.className='story-viewer-bottom';let details=document.createElement('button');details.textContent='View profile';details.onclick=()=>{viewer.remove();if(s.name===profile.name)showPage('profile');else openPublicProfile(s.name);};let stamp=document.createElement('small');stamp.textContent='Posted: '+new Date(s.createdAt).toLocaleString();bottom.append(details,stamp);let save=document.createElement('button');save.textContent='Save to phone';save.onclick=()=>downloadStory(s);bottom.append(save);card.append(top,media,bottom);viewer.append(card);viewer.onclick=e=>{if(e.target===viewer)viewer.remove()};$('modalRoot').append(viewer);}
+function downloadStory(s){getBlob(s.mediaId).then(record=>{if(!record){alert('Original story file is unavailable.');return;}let url=URL.createObjectURL(record.blob),a=document.createElement('a');a.href=url;a.download='GoldenLight_story_'+new Date(s.createdAt).toISOString().replace(/[:.]/g,'-');document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),30000);}).catch(()=>alert('Could not download this story.'));}
+function showStoryArchive(){let modal=document.createElement('div');modal.className='modal';let box=document.createElement('div');box.className='modal-box';box.innerHTML='<h3>My Story Archive</h3><p class="muted">Your story records and original media are kept on this device, even after the 24-hour public display ends.</p>';let mine=stories.filter(s=>s.name===profile.name).sort((a,b)=>b.createdAt-a.createdAt);if(!mine.length){let p=document.createElement('p');p.className='empty';p.textContent='No saved stories yet.';box.append(p);}mine.forEach(s=>{let row=document.createElement('div');row.className='archive-item';let thumb=document.createElement('div');thumb.style.cssText='width:65px;height:65px;background:#eee;border-radius:8px';let meta=document.createElement('div');meta.style.flex='1';meta.innerHTML='<b>Story</b><p class="muted">Posted: '+escapeHTML(new Date(s.createdAt).toLocaleString())+'</p><p class="muted">'+(s.expiresAt>Date.now()?'Visible in stories':'Expired from public stories')+'</p>';let dl=document.createElement('button');dl.className='gold-btn';dl.textContent='Save';dl.onclick=()=>downloadStory(s);row.append(thumb,meta,dl);box.append(row);});let close=document.createElement('button');close.className='gold-btn';close.style.marginTop='14px';close.textContent='Close';close.onclick=()=>modal.remove();box.append(close);modal.append(box);modal.onclick=e=>{if(e.target===modal)modal.remove()};$('modalRoot').append(modal);}
+function openPublicProfile(name){let person=people.find(p=>p.name===name);let modal=document.createElement('div');modal.className='modal';let box=document.createElement('div');box.className='modal-box';let img=document.createElement('img');setAvatarImage(img,person?.photo||profile.photo,name);img.style.cssText='width:85px;height:85px;object-fit:cover;border-radius:50%';let h=document.createElement('h3');h.textContent=name;let p=document.createElement('p');p.textContent='Golden Light community profile';let note=document.createElement('small');note.className='note';note.textContent='This is a sample profile preview. Real member details will appear when user accounts and profile services are connected.';let close=document.createElement('button');close.className='gold-btn';close.textContent='Close';close.onclick=()=>modal.remove();box.append(img,h,p,note,close);modal.append(box);modal.onclick=e=>{if(e.target===modal)modal.remove()};$('modalRoot').append(modal);}
+function renderMyPosts(){$('myPosts').replaceChildren();let mine=posts.filter(p=>p.name===profile.name);if(!mine.length){$('myPosts').textContent='Your posts will appear here.';return}mine.slice().reverse().forEach(p=>makePost(p));}
+function renderChats(){$('chatList').replaceChildren();people.forEach(p=>{let row=document.createElement('div');row.className='chat-row';row.innerHTML='<img src="'+p.photo+'"><div style="flex:1"><b>'+p.name+'</b><p class="muted">Open conversation</p></div><button class="gold-btn">Message</button>';row.querySelector('button').onclick=()=>openChat(p.name);setAvatarImage(row.querySelector('img'),p.photo,p.name);$('chatList').append(row)});}
+function openChat(name){activeChat=name;$('chatTitle').textContent=name;showPage('chat');renderMessages();}
+function renderMessages(){let list=messages[activeChat]||[];$('chatMessages').replaceChildren();list.forEach(m=>{let p=document.createElement('p');p.style.cssText='padding:9px 12px;margin:7px 0;border-radius:12px;background:'+(m.mine?'#f8f0dc':'#f1f1f1')+';text-align:'+(m.mine?'right':'left');p.textContent=m.text;$('chatMessages').append(p)});}
+function sendMessage(){let v=$('chatInput').value.trim();if(!v||!activeChat)return;(messages[activeChat]??=[]).push({text:v,mine:true});$('chatInput').value='';persist();renderMessages();}
+async function saveProfile(){profile.name=$('nameEdit').value.trim()||profile.name;profile.user=$('userEdit').value.trim().replace(/^@/,'')||profile.user;let f=$('avatarEdit').files[0];if(f){if(!f.type.startsWith('image/')){alert('Please choose an image file for your profile photo.');return;}try{profile.photo=await imageToSmallDataURL(f);}catch(e){alert('The profile photo could not be opened. Please choose another picture.');return;}}posts.forEach(p=>{if(!p.photo||p.photo.startsWith('blob:'))p.photo=profile.photo;});localStorage.setItem('glProfile',JSON.stringify(profile));persist();updateProfile();renderFeed();showPage('profile');}
+function updateProfile(){$('profileName').textContent=profile.name;$('profileUsername').textContent='@'+profile.user;setAvatarImage($('profilePic'),profile.photo,profile.name);setAvatarImage($('myAvatar'),profile.photo,profile.name);$('nameEdit').value=profile.name;$('userEdit').value=profile.user;}
+function openSearch(){let q=prompt('Search Golden Light posts or people:');if(!q)return;let found=posts.filter(p=>(p.text||'').toLowerCase().includes(q.toLowerCase())||p.name.toLowerCase().includes(q.toLowerCase()));alert(found.length?found.length+' matching post(s) found in your local feed.':'No matching local posts found.');}
+function logout(){if(confirm('Reset the local demo posts, messages and profile on this device?')){localStorage.removeItem('glPosts');localStorage.removeItem('glMessages');posts=[];messages={};renderFeed();showPage('home');}}
+// Real photographic nature wallpapers rotate every three seconds.
+const goldenLightWallpapers=[
+  'https://images.unsplash.com/photo-1470252649378-9c29740c9fa8?w=1600&auto=format&fit=crop&q=85',
+  'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1600&auto=format&fit=crop&q=85',
+  'https://images.unsplash.com/photo-1518837695005-2083093ee35b?w=1600&auto=format&fit=crop&q=85',
+  'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600&auto=format&fit=crop&q=85',
+  'https://images.unsplash.com/photo-1470770841072-f978cf4d019e?w=1600&auto=format&fit=crop&q=85',
+  'https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1600&auto=format&fit=crop&q=85'
+];
+let goldenLightWallpaperIndex=0;
+let goldenLightWallpaperBusy=false;
+function changeGoldenLightWallpaper(){
+  if(goldenLightWallpaperBusy)return;
+  const url=goldenLightWallpapers[goldenLightWallpaperIndex];
+  const img=new Image();
+  img.onload=()=>{
+    goldenLightWallpaperBusy=true;
+    document.body.style.setProperty('--gl-next-wallpaper',`url("${url}")`);
+    requestAnimationFrame(()=>document.body.classList.add('gl-wallpaper-fade'));
+    setTimeout(()=>{
+      document.body.style.setProperty('--gl-wallpaper',`url("${url}")`);
+      document.body.classList.remove('gl-wallpaper-fade');
+      goldenLightWallpaperIndex=(goldenLightWallpaperIndex+1)%goldenLightWallpapers.length;
+      goldenLightWallpaperBusy=false;
+    },1400);
+  };
+  img.onerror=()=>{goldenLightWallpaperIndex=(goldenLightWallpaperIndex+1)%goldenLightWallpapers.length;};
+  img.src=url;
+}
+// Preload photographs so each new wallpaper is ready before the gentle crossfade.
+goldenLightWallpapers.forEach(url=>{const img=new Image();img.src=url;});
+const firstGoldenWallpaper=new Image();
+firstGoldenWallpaper.onload=()=>{document.body.style.setProperty('--gl-wallpaper',`url("${goldenLightWallpapers[0]}")`);goldenLightWallpaperIndex=1;};
+firstGoldenWallpaper.src=goldenLightWallpapers[0];
+setInterval(changeGoldenLightWallpaper,3000);
+renderPeople();updateProfile();renderFeed();renderChats();restoreLocalMedia();
+</script>
+<script>
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./service-worker.js').catch(err => console.warn('Golden Light offline setup:', err));
+  });
+}
+</script>
+</body></html>
