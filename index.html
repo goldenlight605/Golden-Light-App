@@ -350,3 +350,202 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 }
 </script>
 </body></html>
+
+<script>
+/* GOLDEN LIGHT - FULL MEMBER PROFILE */
+
+(function () {
+  const profileStyles = document.createElement('style');
+  profileStyles.textContent = `
+    .gl-public-cover {
+      height:190px;
+      background:linear-gradient(120deg,#251600,#b8860b,#f7d978,#654000);
+      border-radius:14px 14px 0 0;
+    }
+    .gl-public-photo {
+      width:112px;height:112px;object-fit:cover;
+      border-radius:50%;border:5px solid white;
+      margin-top:-58px;background:#eee;
+    }
+    .gl-public-tabs {
+      display:flex;gap:5px;overflow-x:auto;
+      border-bottom:1px solid #eee;margin-top:18px;
+    }
+    .gl-public-tabs button {
+      border:0;background:none;padding:12px 9px;
+      color:#765400;font-weight:bold;white-space:nowrap;
+    }
+    .gl-public-content {padding:15px 3px;min-height:100px}
+    .gl-public-stats {
+      display:flex;justify-content:space-around;
+      text-align:center;margin:16px 0;
+    }
+    .gl-public-stats b {display:block;font-size:19px;color:#a77c1d}
+    .gl-public-actions {display:flex;gap:9px;justify-content:center}
+    .gl-public-actions button {flex:1}
+  `;
+  document.head.appendChild(profileStyles);
+
+  window.openPublicProfile = function(name) {
+    const person = people.find(p => p.name === name);
+    const photo = person ? person.photo : profile.photo;
+    const savedFollows = JSON.parse(
+      localStorage.getItem('glFollowing') || '[]'
+    );
+    let following = savedFollows.includes(name);
+
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+
+    const box = document.createElement('div');
+    box.className = 'modal-box';
+
+    const cover = document.createElement('div');
+    cover.className = 'gl-public-cover';
+
+    const picture = document.createElement('img');
+    picture.className = 'gl-public-photo';
+    setAvatarImage(picture, photo, name);
+
+    const title = document.createElement('h2');
+    title.textContent = name;
+    title.style.margin = '8px 0';
+
+    const bio = document.createElement('p');
+    bio.textContent = 'Welcome to my Golden Light profile.';
+    bio.className = 'muted';
+
+    const stats = document.createElement('div');
+    stats.className = 'gl-public-stats';
+    stats.innerHTML = `
+      <div><b>0</b>Posts</div>
+      <div><b>${following ? 1 : 0}</b>Following</div>
+      <div><b>0</b>Followers</div>
+    `;
+
+    const actions = document.createElement('div');
+    actions.className = 'gl-public-actions';
+
+    const follow = document.createElement('button');
+    follow.className = 'gold-btn';
+    follow.textContent = following ? 'Following ✓' : '＋ Follow';
+
+    follow.onclick = function() {
+      following = !following;
+      const list = JSON.parse(
+        localStorage.getItem('glFollowing') || '[]'
+      );
+      const updated = following
+        ? [...new Set([...list, name])]
+        : list.filter(n => n !== name);
+      localStorage.setItem('glFollowing', JSON.stringify(updated));
+      follow.textContent = following ? 'Following ✓' : '＋ Follow';
+      stats.children[1].querySelector('b').textContent =
+        following ? '1' : '0';
+    };
+
+    const message = document.createElement('button');
+    message.className = 'gold-btn';
+    message.textContent = '✉ Message';
+    message.onclick = function() {
+      modal.remove();
+      openChat(name);
+    };
+
+    actions.append(follow, message);
+
+    const tabs = document.createElement('div');
+    tabs.className = 'gl-public-tabs';
+
+    const content = document.createElement('div');
+    content.className = 'gl-public-content';
+
+    const tabNames = ['Posts', 'Photos', 'Videos', 'About'];
+
+    function showTab(tab) {
+      content.replaceChildren();
+
+      const memberPosts = posts.filter(p => p.name === name);
+
+      if (tab === 'About') {
+        content.textContent =
+          name + ' is a member of the Golden Light community.';
+        return;
+      }
+
+      let selected = memberPosts;
+
+      if (tab === 'Photos') {
+        selected = memberPosts.filter(p =>
+          (p.type || '').startsWith('image/')
+        );
+      }
+
+      if (tab === 'Videos') {
+        selected = memberPosts.filter(p =>
+          (p.type || '').startsWith('video/')
+        );
+      }
+
+      if (!selected.length) {
+        content.textContent =
+          'No ' + tab.toLowerCase() + ' to display yet.';
+        return;
+      }
+
+      selected.slice().reverse().forEach(p => {
+        const item = document.createElement('div');
+        item.className = 'panel-card';
+        item.style.margin = '8px 0';
+        item.textContent = p.text || 'Shared a post';
+        content.appendChild(item);
+      });
+    }
+
+    tabNames.forEach(tab => {
+      const button = document.createElement('button');
+      button.textContent = tab;
+      button.onclick = () => showTab(tab);
+      tabs.appendChild(button);
+    });
+
+    const close = document.createElement('button');
+    close.className = 'gold-btn';
+    close.textContent = 'Close Profile';
+    close.style.width = '100%';
+    close.onclick = () => modal.remove();
+
+    box.append(
+      cover, picture, title, bio,
+      stats, actions, tabs, content, close
+    );
+
+    modal.appendChild(box);
+    modal.onclick = e => {
+      if (e.target === modal) modal.remove();
+    };
+
+    document.getElementById('modalRoot').appendChild(modal);
+    showTab('Posts');
+  };
+
+  /* Open profiles when a member's post or online picture is tapped */
+  document.addEventListener('click', function(e) {
+    const postHead = e.target.closest('.post-head');
+    if (postHead) {
+      const name = postHead.querySelector('.post-user');
+      if (name) window.openPublicProfile(name.textContent.trim());
+      return;
+    }
+
+    const onlinePerson = e.target.closest('.person');
+    if (onlinePerson) {
+      const firstName = onlinePerson.textContent.trim();
+      const person = people.find(p =>
+        p.name.split(' ')[0] === firstName
+      );
+      if (person) window.openPublicProfile(person.name);
+    }
+  });
+})();
+</script>
